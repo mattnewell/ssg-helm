@@ -1,0 +1,30 @@
+replicaCount: 1
+concurrentTransfers: 6
+
+imagePullPolicy: IfNotPresent
+
+serviceType: NodePort
+servicePort: 32500
+
+## Node selector
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+ssl:
+  enabled: false
+#  key: base64 encoded private key
+
+mssql-linux:
+  enabled: true
+  acceptEula:
+    value: "Y"
+  edition:
+    value: "Developer"
+  image:
+    tag: 2017-CU7
+  # This password needs to be set here since it is referenced in both the subchart
+  # and the parent chart. So we can't rely on the random password set in the subchart
+  # if the password is not set.
+  sapassword: "this!is!not!a!secure!default!123"
+  persistence:
+    enabled: false

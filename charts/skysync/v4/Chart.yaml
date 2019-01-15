@@ -1,0 +1,15 @@
+name: skysync
+version: 0.0.0
+description: SkySync is a file sync and migration solution used by many enterprises to
+  securely migrate, copy, and synchronize files across storage system.
+keywords:
+- skysync
+- migration
+- file sync
+home: https://www.skysync.com/
+sources:
+- https://github.com/portalarchitects/skysync-vnext
+maintainers:
+- name: SkySync Developers
+  email: developers@skysync.com
+engine: gotpl

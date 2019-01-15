@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "skysync.fullname" . }}
+  labels:
+    app: {{ template "skysync.name" . }}
+    chart: {{ template "skysync.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "skysync.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "skysync.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ printf "index.docker.io/portalarchitects/skysync:%s" .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - containerPort: 9090
+              name: skysync
+          livenessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /v1/connections/platforms
+              port: skysync
+{{- if .Values.ssl.key }}
+              scheme: HTTPS
+{{- end }}
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /v1/connections/platforms
+              port: skysync
+{{- if .Values.ssl.key }}
+              scheme: HTTPS
+{{- end }}
+          env:
+            - name: SKYSYNC_SERVER__PORT
+              value: "9090"
+            - name: SKYSYNC_DATA__PROVIDER
+{{- if (index .Values "mssql-linux" "enabled") }}
+              value: sqlserver
+{{- else }}
+              value: {{ default "sqlserver" .Values.dbProvider }}
+{{- end }}
+            - name: SKYSYNC_DATA__CONNECTION
+              valueFrom:
+               secretKeyRef:
+                 name: {{ template "skysync.fullname" . }}-secret
+                 key: dbConnectionString
+            - name: ADMIN_PASSWORD
+              valueFrom:
+               secretKeyRef:
+                 name: {{ template "skysync.fullname" . }}-secret
+                 key: adminPassword
+            - name: SKYSYNC_LOGGING__LEVEL
+              valueFrom:
+               configMapKeyRef:
+                 name: {{ template "skysync.fullname" . }}-config
+                 key: logLevel
+            - name: SKYSYNC_LICENSE__KEY
+              valueFrom:
+               secretKeyRef:
+                 name: {{ template "skysync.fullname" . }}-secret
+                 key: licenseKey
+{{- if .Values.ssl.key }}
+            - name: SKYSYNC_SERVER__CERTIFICATE
+              value: /config/ssl-certificates/ssl-certificate.pfx
+{{- if .Values.ssl.password }}
+            - name: SKYSYNC_SERVER__CERTIFICATE_PASSWORD
+              valueFrom:
+               secretKeyRef:
+                 name: {{ template "skysync.fullname" . }}-secret
+                 key: sslPassword
+{{- end }}
+{{- end }}
+            - name: SKYSYNC_PERFORMANCE__CONCURRENT_TRANSFERS
+              value: "{{ .Values.concurrentTransfers }}"
+{{- if .Values.prometheusPushUri }}
+            - name: SKYSYNC_METRICS__PROMETHEUS__PUSH_URI
+              value: "{{ .Values.prometheusPushUri }}"
+{{- end }}
+{{- if .Values.ssl.key }}
+          volumeMounts:
+            - name: ssl-certificates
+              mountPath: /config/ssl-certificates
+      volumes:
+        - name: ssl-certificates
+          secret:
+            secretName: {{ template "skysync.fullname" . }}-ssl-certs
+{{- end }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+{{- end }}

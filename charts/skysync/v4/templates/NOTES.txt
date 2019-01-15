@@ -1,0 +1,24 @@
+License Terms for SkySync
+Please read the License Terms Carefully.  They can be found in the End-User Licensing Agreement.
+
+
+License Terms: https://skysync.com/terms-of-use/
+
+SkySync Name: {{ template "skysync.fullname" . }}.{{ .Release.Namespace }}
+Port: {{ .Values.servicePort }}
+
+Gain access to your SkySync nodes:
+1. Get the IP address
+$ kubectl get pods -l app={{ template "skysync.name" . }} -o=jsonpath='{.items[0].status.hostIP}'
+
+OR
+
+$ minikube service {{ template "skysync.fullname" . }} --url
+
+2. Get `admin` Password
+$ printf $(kubectl get secret --namespace {{ .Release.Namespace }} {{ template "skysync.fullname" . }}-secret -o=jsonpath='{.data.adminPassword}' | base64 --decode);echo
+
+3. You can test that SkySync is running with the following set of commands:
+$ kubectl run skysync-cli --image=library/node:9.11.2-alpine -ti --restart=Never --rm=true -- /bin/sh
+$ npm install -g skysync-cli
+$ skysync-cli jobs list --server http{{ if .Values.ssl.key }}s{{ end }}://{{ template "skysync.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.servicePort }} -username admin --password <Enter Password for admin>
