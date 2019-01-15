@@ -22,8 +22,8 @@ spec:
       imagePullSecrets:
         - name: regcred
       containers:
-        - name: {{ .Chart.Name }}
-          image: {{ printf "index.docker.io/portalarchitects/skysync:%s" .Chart.AppVersion }}
+        - name: skysync
+          image: index.docker.io/portalarchitects/skysync:4.6.0.1246
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: 9090
