@@ -3,9 +3,6 @@ concurrentTransfers: 6
 
 imagePullPolicy: IfNotPresent
 
-serviceType: NodePort
-servicePort: 32500
-
 ## Node selector
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
@@ -15,7 +12,7 @@ ssl:
 #  key: base64 encoded private key
 
 mssql-linux:
-  enabled: true
+  enabled: false
   acceptEula:
     value: "Y"
   edition:
