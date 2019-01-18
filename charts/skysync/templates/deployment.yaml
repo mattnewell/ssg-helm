@@ -52,6 +52,9 @@ spec:
 {{- if .Values.ssl.key }}
               scheme: HTTPS
 {{- end }}
+          resources:
+            requests:
+              cpu: "1.5"
           env:
             - name: SKYSYNC_SERVER__PORT
               value: "9090"
