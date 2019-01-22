@@ -23,7 +23,7 @@ spec:
         - name: regcred
       containers:
         - name: skysync
-          image: index.docker.io/portalarchitects/skysync:4.6.0.1253
+          image: index.docker.io/portalarchitects/skysync:4.6.1.1267
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: 9090
