@@ -4,7 +4,7 @@ metadata:
   name: {{ template "skysync.fullname" . }}-config
   labels:
     app: {{ template "skysync.name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    chart: {{ template "skysync.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

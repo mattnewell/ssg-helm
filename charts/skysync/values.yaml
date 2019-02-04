@@ -1,5 +1,7 @@
 replicaCount: 1
 concurrentTransfers: 6
+s3BucketName: aws-us-west-2-ssg-logs
+s3Region: us-west-2
 
 imagePullPolicy: IfNotPresent
 
