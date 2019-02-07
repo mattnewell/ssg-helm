@@ -41,7 +41,7 @@ spec:
             - name: fluentd-config
               mountPath: /fluentd/etc
         - name: skysync
-          image: index.docker.io/portalarchitects/skysync:4.6.1.1267
+          image: index.docker.io/portalarchitects/skysync:4.6.4.1295
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: 9090
