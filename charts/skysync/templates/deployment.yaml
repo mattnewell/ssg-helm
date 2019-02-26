@@ -24,7 +24,7 @@ spec:
         - name: regcred
       containers:
         - name: fluentd
-          image: fluent/fluentd-kubernetes-daemonset:v1.3.3-debian-s3-1.0
+          image: fluent/fluentd-kubernetes-daemonset:v1.3-debian-cloudwatch-1
           env:
           resources:
             limits:

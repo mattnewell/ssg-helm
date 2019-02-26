@@ -23,25 +23,9 @@ data:
         </source>
         
         <match **>
-          # docs: https://docs.fluentd.org/v0.12/articles/out_s3
-          # note: this configuration relies on the nodes have an IAM instance profile with access to your S3 bucket
-          @type s3
-          @id out_s3
-          @log_level info
-          s3_bucket {{ .Values.s3BucketName }}
-          s3_region {{ .Values.s3Region }}
-          #s3_object_key_format %{path}%Y/%m/%d/cluster-log-%{index}.%{file_extension}
-          s3_object_key_format {{ template "skysync.fullname" . }}/%Y/%m/%d/cluster-log-%{index}.%{file_extension}
-          <inject>
-            time_key time
-            tag_key tag
-            localtime false
-          </inject>
-          <buffer>
-            @type file
-            path /tmp/s3.buffer
-            timekey 30m
-            timekey_use_utc true
-            chunk_limit_size 256m
-          </buffer>
+            #docs: https://github.com/fluent-plugins-nursery/fluent-plugin-cloudwatch-logs
+            @type cloudwatch_logs
+            log_group_name skysync-hosted
+            log_stream_name {{ template "skysync.fullname" . }}
+            auto_create_stream true
         </match>
