@@ -27,6 +27,6 @@ data:
             @type cloudwatch_logs
             region us-west-2
             log_group_name skysync-hosted
-            log_stream_name {{ template "skysync.fullname" . }}
+            use_tag_as_stream true
             auto_create_stream true
         </match>
