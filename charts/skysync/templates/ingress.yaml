@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "skysync.fullname" . }}
+  annotations:
+    kubernetes.io/ingress.class: merge
+    merge.ingress.kubernetes.io/config: merged-ingress
+spec:
+  rules:
+  - host: {{ template "skysync.name" . }}.go.skysync.com
+    http:
+      paths:
+        - backend:
+            serviceName: {{ template "skysync.fullname" . }}
+            servicePort: 9090
+          path: /*
