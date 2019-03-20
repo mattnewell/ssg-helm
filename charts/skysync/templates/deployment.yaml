@@ -26,7 +26,8 @@ spec:
         - name: database-creator
           image: index.docker.io/dycsail/database-creator:latest
           args:
-            - {{ .Values.tmpDbString }}
+            - -c {{ .Release.Name }}
+            - -n {{ .Release.Namespace }}
       containers:
         - name: skysync
           image: index.docker.io/portalarchitects/skysync:4.6.5.1331
