@@ -65,9 +65,7 @@ spec:
             - name: SKYSYNC_DATA__CONNECTION
               valueFrom:
                secretKeyRef:
-                 #name: {{ template "skysync.fullname" . }}-secret
-                 #key: dbConnectionString
-                 name: customer1-connection-string
+                 name: {{ .Release.Name }}-database-secret
                  key: connectionString
             - name: ADMIN_PASSWORD
               valueFrom:
