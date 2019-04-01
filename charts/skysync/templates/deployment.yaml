@@ -30,7 +30,7 @@ spec:
             - -n{{ .Release.Namespace }}
       containers:
         - name: skysync
-          image: index.docker.io/portalarchitects/skysync:4.6.5.1331
+          image: index.docker.io/portalarchitects/skysync:4.7.0.1383
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: 9090
@@ -73,10 +73,7 @@ spec:
                  name: {{ template "skysync.fullname" . }}-secret
                  key: adminPassword
             - name: SKYSYNC_LOGGING__LEVEL
-              valueFrom:
-               configMapKeyRef:
-                 name: {{ template "skysync.fullname" . }}-config
-                 key: logLevel
+              value: {{ default "info" .Values.logLevel | quote }}
             - name: SKYSYNC_LICENSE__KEY
               value: {{ .Values.skysyncLicense }}
             - name: SKYSYNC_PERFORMANCE__CONCURRENT_TRANSFERS
