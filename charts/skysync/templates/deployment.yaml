@@ -19,7 +19,7 @@ spec:
         app: {{ template "skysync.name" . }}
         release: {{ .Release.Name }}
     spec:
-      serviceAccountName: fluentd
+      serviceAccountName: database-creator
       imagePullSecrets:
         - name: regcred
       initContainers:
@@ -44,9 +44,6 @@ spec:
             httpGet:
               path: /v1/connections/platforms
               port: skysync
-{{- if .Values.ssl.key }}
-              scheme: HTTPS
-{{- end }}
           readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 20
@@ -56,21 +53,15 @@ spec:
             httpGet:
               path: /v1/connections/platforms
               port: skysync
-{{- if .Values.ssl.key }}
-              scheme: HTTPS
-{{- end }}
           resources:
             requests:
               cpu: "1.5"
+              memory: "4Gi"
           env:
             - name: SKYSYNC_SERVER__PORT
               value: "9090"
             - name: SKYSYNC_DATA__PROVIDER
-{{- if (index .Values "mssql-linux" "enabled") }}
               value: sqlserver
-{{- else }}
-              value: {{ default "sqlserver" .Values.dbProvider }}
-{{- end }}
             - name: SKYSYNC_DATA__CONNECTION
               valueFrom:
                secretKeyRef:
@@ -84,21 +75,7 @@ spec:
             - name: SKYSYNC_LOGGING__LEVEL
               value: {{ default "info" .Values.logLevel | quote }}
             - name: SKYSYNC_LICENSE__KEY
-              valueFrom:
-               secretKeyRef:
-                 name: {{ template "skysync.fullname" . }}-secret
-                 key: licenseKey
-{{- if .Values.ssl.key }}
-            - name: SKYSYNC_SERVER__CERTIFICATE
-              value: /config/ssl-certificates/ssl-certificate.pfx
-{{- if .Values.ssl.password }}
-            - name: SKYSYNC_SERVER__CERTIFICATE_PASSWORD
-              valueFrom:
-               secretKeyRef:
-                 name: {{ template "skysync.fullname" . }}-secret
-                 key: sslPassword
-{{- end }}
-{{- end }}
+              value: {{ .Values.skysyncLicense }}
             - name: SKYSYNC_PERFORMANCE__CONCURRENT_TRANSFERS
               value: "{{ .Values.concurrentTransfers }}"
 {{- if .Values.prometheusPushUri }}
