@@ -78,6 +78,8 @@ spec:
               value: {{ .Values.skysyncLicense }}
             - name: SKYSYNC_PERFORMANCE__CONCURRENT_TRANSFERS
               value: "{{ .Values.concurrentTransfers }}"
+            - name: SKYSYNC_DATA__NATIVE_ENCRYPTION
+              value: "false"
 {{- if .Values.prometheusPushUri }}
             - name: SKYSYNC_METRICS__PROMETHEUS__PUSH_URI
               value: "{{ .Values.prometheusPushUri }}"
